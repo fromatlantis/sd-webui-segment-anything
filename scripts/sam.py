@@ -251,8 +251,8 @@ def sam_upload(input_image):
     predictor = SamPredictorHQ(sam, 'hq' in sam_model_name)
     predictor.set_image(image_np_rgb)
     image_embedding = predictor.get_image_embedding().cpu().numpy()
-    np.save("/kaggle/working/stable-diffusion-webui/uploadFile/output.npy", image_embedding)
-    return {"path":"/kaggle/working/stable-diffusion-webui/uploadFile"}
+    np.save("output.npy", image_embedding)
+    return {"path":"output.npy"}
 
 
 def dino_predict(input_image, dino_model_name, text_prompt, box_threshold):
