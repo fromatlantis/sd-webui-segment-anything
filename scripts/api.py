@@ -7,7 +7,7 @@ from PIL import Image
 import numpy as np
 
 from modules.api.api import encode_pil_to_base64, decode_base64_to_image
-from scripts.sam import sam_predict, dino_predict, update_mask, cnet_seg, categorical_mask
+from scripts.sam import sam_predict, sam_upload, dino_predict, update_mask, cnet_seg, categorical_mask
 from scripts.sam import sam_model_list
 
 
@@ -83,6 +83,16 @@ def sam_api(_: gr.Blocks, app: FastAPI):
             result["masks"] = list(map(encode_to_base64, sam_output_mask_gallery[3:6]))
             result["masked_images"] = list(map(encode_to_base64, sam_output_mask_gallery[6:]))
         return result
+
+    class SamUploadRequest(BaseModel):
+        input_image: str
+    #上传图片转为npy文件
+    @app.post("/sam/upload")
+    async def api_sam_upload(payload: SamUploadRequest = Body(...)) -> Any:
+        print(f"SAM upload /sam/upload received request")
+        payload.input_image = decode_to_pil(payload.input_image).convert('RGBA')
+        path = sam_upload(payload.input_image)
+        return path
 
     class DINOPredictRequest(BaseModel):
         input_image: str
